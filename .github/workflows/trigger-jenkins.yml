@@ -1,0 +1,38 @@
+name: Trigger Jenkins and Build Docker
+
+on:
+  push:
+    branches:
+      - main   # Trigger workflow on push to main branch
+
+jobs:
+  trigger-jenkins:
+    runs-on: self-hosted   # ya 'ubuntu-latest' agar GitHub runner use kar rahe ho
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Trigger Jenkins Job
+      - name: Trigger Jenkins Job
+        run: |
+          curl -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+               -X POST "http://JENKINS_URL/job/my-docker-job/build"
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: trigger-jenkins
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t myapp:latest .
+
+      # 3️⃣ Run Docker container
+      - name: Run Docker container
+        run: |
+          docker run -d --name myapp_container -p 8080:8080 myapp:latest
