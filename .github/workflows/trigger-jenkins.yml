@@ -1,66 +1,18 @@
-name: CI/CD with Jenkins & Docker
+name: Trigger Jenkins
 
 on:
   push:
     branches:
-      - main   # Trigger on push to main branch
+      - main
 
 jobs:
   trigger-jenkins:
-    runs-on: self-hosted   # Use your self-hosted runner or ubuntu-latest
+    runs-on: self-hosted   # ya ubuntu-latest agar test karna ho
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Trigger Jenkins Job
-        id: jenkins_trigger
         run: |
-          echo "Triggering Jenkins Job..."
-          curl -s -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
-               -X POST "http://JENKINS_URL/job/my-docker-job/build"
-
-      - name: Wait for Jenkins Job to Complete
-        run: |
-          echo "Waiting for Jenkins job to finish..."
-          STATUS=""
-          while [ "$STATUS" != "SUCCESS" ]; do
-            STATUS=$(curl -s -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
-                     "http://JENKINS_URL/job/my-docker-job/lastBuild/api/json" | jq -r '.result')
-            echo "Current Jenkins status: $STATUS"
-            if [ "$STATUS" == "FAILURE" ] || [ "$STATUS" == "ABORTED" ]; then
-              echo "Jenkins job failed or aborted. Exiting."
-              exit 1
-            fi
-            if [ "$STATUS" == "SUCCESS" ]; then
-              echo "Jenkins job completed successfully!"
-              break
-            fi
-            sleep 10
-          done
-
-  docker-build:
-    runs-on: ubuntu-latest
-    needs: trigger-jenkins
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set Docker Image Tag
-        run: |
-          echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - name: Remove Existing Container
-        run: |
-          docker rm -f myapp_container || true
-
-      - name: Build Docker Image
-        run: |
-          docker build -t myapp:${{ env.COMMIT_SHA }} .
-
-      - name: Run Docker Container
-        run: |
-          docker run -d --name myapp_container -p 8080:8080 myapp:${{ env.COMMIT_SHA }}
-
-      - name: Verify Container is Running
-        run: |
-          docker ps | grep myapp_container
+          curl -u "${{ secrets.JENKINS_USER }}:${{ secrets.JENKINS_TOKEN }}" \
+          -X POST "http://YOUR_JENKINS_URL/job/my-docker-job/build"
