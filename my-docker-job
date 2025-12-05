@@ -1,2 +1,0 @@
-docker build -t myjenkinapp:latest /path/to/dockerfile
-docker run -d --name myjenkinapp_container -p 8081:8080 myjenkinapp:latest

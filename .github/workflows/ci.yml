@@ -1,0 +1,23 @@
+name: Jenkins CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  jenkins-container-pipeline:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/jenkinsci/jenkinsfile-runner:master
+    steps:
+      # 1️⃣ Checkout your code
+      - uses: actions/checkout@v2
+
+      # 2️⃣ Run Jenkins pipeline using Jenkinsfile Runner
+      - uses: jenkinsci/jfr-container-action@master
+        with:
+          command: run
+          jenkinsfile: Jenkinsfile
+          pluginstxt: plugins.txt
+          jcasc: jcasc.yml
