@@ -1,22 +1,9 @@
-name: Jenkinsfile Runner CI
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
-  jenkins-static-pipeline:
-    runs-on: ubuntu-latest
-
+  check-glibc:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Run Jenkinsfile Runner (Static Image)
-        uses: jenkinsci/jfr-static-image-action@master
-        with:
-          command: run
-          jenkinsfile: Jenkinsfile
-          pluginstxt: plugins.txt
-          jcasc: jcasc.yaml
+      - name: Check GLIBC version
+        run: ldd --version
