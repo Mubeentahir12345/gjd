@@ -1,6 +1,4 @@
-git
-docker
-junit
-credentials
-blueocean
-adoptopenjdk
+workflow-aggregator
+docker-workflow
+pipeline-utility-steps
+configuration-as-code

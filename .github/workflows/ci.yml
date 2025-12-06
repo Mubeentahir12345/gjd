@@ -3,23 +3,25 @@ name: Jenkinsfile Runner CI
 on:
   push:
     branches:
-      - main  # Ensure this matches your default branch
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  jenkins-static-pipeline:
-    runs-on: ubuntu-22.04
+  jenkins-runner:
+    runs-on: ubuntu-22.04  # GLIBC 2.31 compatible
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Check GLIBC version
-        run: ldd --version
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Run Jenkinsfile Runner
         uses: jenkinsci/jfr-static-image-action@master
         with:
-          command: run
+          context: .
+          tag: users-defined-jenkins:latest
           jenkinsfile: Jenkinsfile
-          pluginstxt: plugins.txt
-          jcasc: jcasc.yaml

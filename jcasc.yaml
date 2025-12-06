@@ -1,16 +1,15 @@
 jenkins:
-  globalNodeProperties:
-    - envVars:
-        env:
-          - key: hello
-            value: world
+  systemMessage: "Jenkins configured by jcasc.yaml"
+  numExecutors: 2
+unclassified:
+  location:
+    url: "http://localhost:8080/"
 tool:
   jdk:
     installations:
       - name: jdk21
-        home: "~/jdk21"
-        properties:
-          - installSource:
-              installers:
-                - adoptOpenJdkInstaller:
-                    id: "jdk-21.0.7+6"
+        home: "/usr/lib/jvm/java-21-openjdk-amd64"
+  maven:
+    installations:
+      - name: maven
+        home: "/usr/share/maven"

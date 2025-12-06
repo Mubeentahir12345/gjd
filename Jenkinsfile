@@ -4,16 +4,19 @@ pipeline {
         jdk 'jdk21'
         maven 'maven'
     }
+    environment {
+        hello = "Hello from Jenkinsfile Runner!"
+    }
     stages {
         stage('Test Env') {
             steps {
-                echo "JCasC env.hello: ${env.hello}"
+                echo "${env.hello}"
             }
         }
         stage('Build') {
             steps {
                 sh 'mvn --version'
-                sh 'mvn clean install -B --no-transfer-progress'
+                sh 'mvn clean install'
             }
         }
     }
