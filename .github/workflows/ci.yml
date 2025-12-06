@@ -1,3 +1,5 @@
+name: Jenkinsfile Runner CI
+
 on:
   push:
     branches:
@@ -5,3 +7,27 @@ on:
   pull_request:
     branches:
       - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Checkout your repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Jenkinsfile Runner Static Image
+      - name: Build Jenkinsfile Runner Docker image
+        uses: jenkinsci/jfr-static-image-action@v2
+        with:
+          baseImage: jenkins/jenkinsfile-runner:latest
+          jenkinsfile: Jenkinsfile
+          pluginstxt: plugins.txt
+          jcasc: jcasc.yaml
+          command: ""
+
+      # Test Docker image (optional)
+      - name: Test Docker image
+        run: |
+          docker images | grep users-defined-jenkins
