@@ -1,5 +1,6 @@
 name: Jenkinsfile Runner CI
 
+# Trigger workflow on push to main branch
 on:
   push:
     branches:
@@ -8,26 +9,31 @@ on:
     branches:
       - main
 
+# Set permissions (read + write)
+permissions:
+  contents: write      # allows both read & write
+  packages: write      # allows both read & write
+  id-token: write      # allows write
+
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  jenkins-runner:
+    runs-on: ubuntu-latest
 
     steps:
-      # Checkout your repo
-      - name: Checkout repository
+      # Checkout the repo
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Jenkinsfile Runner Static Image
-      - name: Build Jenkinsfile Runner Docker image
-        uses: jenkinsci/jfr-static-image-action@v2
+      # Build Jenkinsfile Runner Docker image
+      - name: Build Jenkinsfile Runner Image
+        uses: jenkinsci/jfr-static-image-action@v1.6.0
         with:
-          baseImage: jenkins/jenkinsfile-runner:latest
-          jenkinsfile: Jenkinsfile
-          pluginstxt: plugins.txt
-          jcasc: jcasc.yaml
-          command: ""
+          command: run   # Run Jenkinsfile Runner
+          base_image: jenkins/jenkinsfile-runner:latest
 
-      # Test Docker image (optional)
-      - name: Test Docker image
+      # Run Jenkinsfile Runner
+      - name: Run Jenkinsfile Runner
         run: |
-          docker images | grep users-defined-jenkins
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            users-defined-jenkins:latest
