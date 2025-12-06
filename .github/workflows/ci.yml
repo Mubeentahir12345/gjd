@@ -10,18 +10,16 @@ on:
 
 jobs:
   jenkins-runner:
-    runs-on: ubuntu-22.04  # GLIBC 2.31 compatible
+    runs-on: ubuntu-22.04  # GLIBC >=2.28
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
 
       - name: Run Jenkinsfile Runner
         uses: jenkinsci/jfr-static-image-action@master
         with:
-          context: .
-          tag: users-defined-jenkins:latest
+          baseImage: "jenkins/jenkinsfile-runner:latest"
           jenkinsfile: Jenkinsfile
+          pluginstxt: plugins.txt
+          jcasc: jcasc.yaml
