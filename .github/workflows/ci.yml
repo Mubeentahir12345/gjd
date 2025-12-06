@@ -6,19 +6,15 @@ on:
       - main
 
 jobs:
-  jenkins-container-pipeline:
-    runs-on: ubuntu-22.04        # Correct Ubuntu version for GLIBC >= 2.28
-    container:
-      image: ghcr.io/jenkinsci/jenkinsfile-runner:master
+  jenkins-static-pipeline:
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Run Jenkinsfile Runner with container
-      - name: Run Jenkinsfile Runner
-        uses: jenkinsci/jfr-container-action@master
+      - name: Run Jenkinsfile Runner (Static Image)
+        uses: jenkinsci/jfr-static-image-action@master
         with:
           command: run
           jenkinsfile: Jenkinsfile
