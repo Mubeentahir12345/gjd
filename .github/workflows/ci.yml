@@ -1,6 +1,5 @@
 name: Jenkinsfile Runner CI
 
-# Trigger workflow on push or pull request to main
 on:
   push:
     branches:
@@ -9,10 +8,9 @@ on:
     branches:
       - main
 
-# Permissions
 permissions:
-  contents: write
-  packages: write
+  contents: write    # read + write
+  packages: write    # read + write
   id-token: write
 
 jobs:
@@ -20,22 +18,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
+      # 1️⃣ Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Build Jenkinsfile Runner Docker image
-      - name: Build Jenkinsfile Runner image
-        uses: jenkinsci/jfr-static-image-action@master
+      # 2️⃣ Set environment variable (example)
+      - name: Set environment variable
+        run: echo "WORKSPACE_DIR=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+
+      # 3️⃣ Build Jenkinsfile Runner Docker image
+      - name: Build Jenkinsfile Runner Image
+        uses: jenkinsci/jfr-static-image-action@v1.6.0
         with:
           command: run
-          baseImage: jenkins/jenkinsfile-runner:latest
-          pluginstxt: plugins.txt
-          jcasc: jcasc.yaml
+          base_image: jenkins/jenkinsfile-runner:latest
 
-      # Optional: Run Jenkinsfile Runner container manually
-      - name: Run Jenkinsfile Runner manually
+      # 4️⃣ Run Jenkinsfile Runner
+      - name: Run Jenkinsfile Runner
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             users-defined-jenkins:latest
+
+      # 5️⃣ Set output example
+      - name: Set example output
+        id: example
+        run: echo "status=success" >> $GITHUB_OUTPUT
+
+      # 6️⃣ Use the output
+      - name: Show output
+        run: echo "Pipeline status is ${{ steps.example.outputs.status }}"
