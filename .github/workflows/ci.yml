@@ -9,7 +9,7 @@ on:
     branches:
       - main
 
-# Set permissions
+# Permissions
 permissions:
   contents: write
   packages: write
@@ -20,22 +20,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Build Jenkinsfile Runner Docker image using latest stable action
+      # Build Jenkinsfile Runner Docker image
       - name: Build Jenkinsfile Runner image
-        uses: jenkinsci/jfr-static-image-action@v1.8.0
+        uses: jenkinsci/jfr-static-image-action@master
         with:
           command: run
           baseImage: jenkins/jenkinsfile-runner:latest
           pluginstxt: plugins.txt
           jcasc: jcasc.yaml
-          initHook: echo "Jenkinsfile Runner image is ready"
 
-      # 3️⃣ Run Jenkinsfile Runner
-      - name: Run Jenkinsfile Runner
+      # Optional: Run Jenkinsfile Runner container manually
+      - name: Run Jenkinsfile Runner manually
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
