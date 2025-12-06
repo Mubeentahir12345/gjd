@@ -1,20 +1,26 @@
-name: Java CI
-on: [push]
+name: Jenkinsfile Runner CI
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   jenkins-container-pipeline:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-22.04        # Correct Ubuntu version for GLIBC >= 2.28
     container:
       image: ghcr.io/jenkinsci/jenkinsfile-runner:master
 
     steps:
-      - uses: actions/checkout@v2
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - uses: jenkinsci/jfr-container-action@master
+      # Step 2: Run Jenkinsfile Runner with container
+      - name: Run Jenkinsfile Runner
+        uses: jenkinsci/jfr-container-action@master
         with:
           command: run
           jenkinsfile: Jenkinsfile
           pluginstxt: plugins.txt
-          jcasc: jcasc.yml
-          initHook: groovy.init.d
+          jcasc: jcasc.yaml
