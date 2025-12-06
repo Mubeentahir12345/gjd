@@ -1,6 +1,6 @@
 name: Jenkinsfile Runner CI
 
-# Trigger workflow on push or PR to main branch
+# Trigger workflow on push or pull request to main
 on:
   push:
     branches:
@@ -20,20 +20,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repo
+      # 1️⃣ Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Build Jenkinsfile Runner Docker image
+      # 2️⃣ Build Jenkinsfile Runner Docker image using latest stable action
       - name: Build Jenkinsfile Runner image
-        uses: jenkinsci/jfr-static-image-action@master
+        uses: jenkinsci/jfr-static-image-action@v1.8.0
         with:
           command: run
           baseImage: jenkins/jenkinsfile-runner:latest
           pluginstxt: plugins.txt
           jcasc: jcasc.yaml
+          initHook: echo "Jenkinsfile Runner image is ready"
 
-      # Run Jenkinsfile Runner
+      # 3️⃣ Run Jenkinsfile Runner
       - name: Run Jenkinsfile Runner
         run: |
           docker run --rm \
